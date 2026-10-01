@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CareerFlow is a private, browser-based application tracker and local career readiness guide.">
+  <title>CareerFlow — From Applying to Becoming Ready</title>
+  <script>
+    (function () {
+      var theme;
+      try { theme = localStorage.getItem("careerflow-theme-v1"); } catch (error) { /* storage may be unavailable */ }
+      if (theme !== "light" && theme !== "dark") theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = theme;
+    }());
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="#dashboard" aria-label="CareerFlow dashboard">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <path d="M7 29.5V10.5A3.5 3.5 0 0 1 10.5 7h19A3.5 3.5 0 0 1 33 10.5v19A3.5 3.5 0 0 1 29.5 33h-19A3.5 3.5 0 0 1 7 29.5Z" fill="currentColor" opacity=".18"/>
+          <path d="M11.5 24.7 17 19.2l4.2 4.2 7.8-8.1M24.5 15.3H29v4.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/>
+        </svg>
+        <span>Career<span>Flow</span></span>
+      </a>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#applications">My Applications</a>
+        <a href="#ai">CareerFlow AI</a>
+        <a href="#career-map">Career Map</a>
+      </nav>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+      <a class="button button-primary nav-cta" href="#ai">Analyze a Job</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Your private career workspace</p>
+          <h1 id="hero-title">From Applying to <em>Becoming Ready.</em></h1>
+          <p class="hero-lede">CareerFlow does more than track applications: it turns job requirements into a personal, checkable readiness plan—privately in your browser.</p>
+          <div class="hero-actions">
+            <a class="button button-primary button-large" href="#ai">Analyze a Job <span aria-hidden="true">→</span></a>
+            <a class="text-link" href="#applications">Track applications <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="privacy-note">Works locally in your browser. Your entered data stays on this device.</p>
+        </div>
+        <div class="hero-panel" aria-label="CareerFlow journey overview">
+          <div class="hero-panel-head">
+            <span class="small-label">YOUR CAREERFLOW</span>
+            <span class="live-chip"><span aria-hidden="true"></span> Private workspace</span>
+          </div>
+          <ol class="journey-list">
+            <li><span class="journey-number">01</span><div><strong>Track</strong><p>Keep every opportunity in view.</p></div></li>
+            <li><span class="journey-number">02</span><div><strong>Understand</strong><p>Read job requirements with clarity.</p></div></li>
+            <li><span class="journey-number">03</span><div><strong>Discover Gaps</strong><p>Compare text without assumptions.</p></div></li>
+            <li><span class="journey-number">04</span><div><strong>Prepare</strong><p>Turn findings into small actions.</p></div></li>
+            <li><span class="journey-number">05</span><div><strong>Follow Up</strong><p>Stay thoughtful and on time.</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard" class="section dashboard-section" aria-labelledby="dashboard-title">
+      <div class="shell">
+        <div class="section-heading dashboard-heading">
+          <div>
+            <p class="eyebrow">Career command center</p>
+            <h2 id="dashboard-title">Build momentum with one clear move.</h2>
+          </div>
+          <button class="button button-secondary" type="button" data-action="load-example">Load example data</button>
+        </div>
+        <p class="section-intro">Follow the CareerFlow journey from the opportunity in front of you to practical, private preparation. Example entries are always labelled <strong>Demo Data</strong>.</p>
+
+        <div id="demo-status" class="demo-status" role="status" aria-live="polite" hidden></div>
+
+        <div class="command-center-grid">
+          <article id="next-step-card" class="next-step-card" aria-live="polite"></article>
+          <article class="panel readiness-panel" aria-labelledby="readiness-title">
+            <div class="readiness-panel-orbit" aria-hidden="true"><span>READY</span></div>
+            <div class="panel-header"><div><p class="small-label">CAREER READINESS</p><h3 id="readiness-title">Preparation, made visible</h3></div><strong id="readiness-panel-percent">0%</strong></div>
+            <div class="progress-track" role="progressbar" aria-label="Career readiness progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="readiness-progress"></span></div>
+            <p id="readiness-panel-copy" class="panel-copy">Analyze a job to create a personal, checkable readiness plan.</p>
+            <p id="readiness-panel-count" class="readiness-count">No readiness actions yet</p>
+            <a class="button button-secondary button-block" href="#ai">Build my readiness plan <span aria-hidden="true">→</span></a>
+          </article>
+        </div>
+
+        <div class="metrics-grid metrics-rail" aria-label="Application metrics">
+          <article class="metric-card"><p>Total Applications</p><strong id="metric-total">0</strong><span id="metric-total-copy">Start by adding an opportunity</span></article>
+          <article class="metric-card"><p>In Progress</p><strong id="metric-progress">0</strong><span>Applied or screening</span></article>
+          <article class="metric-card"><p>Interviews</p><strong id="metric-interviews">0</strong><span>Conversations to prepare for</span></article>
+          <article class="metric-card"><p>Offers</p><strong id="metric-offers">0</strong><span>Opportunities progressing</span></article>
+          <article class="metric-card metric-alert"><p>Follow-up Needed</p><strong id="metric-followup">0</strong><span>Applied or Interview, 14+ days ago</span></article>
+          <article class="metric-card metric-readiness"><p>Plan Progress</p><strong id="metric-readiness">0%</strong><span>A planning indicator, not a prediction</span></article>
+        </div>
+
+        <article class="dashboard-journey" aria-labelledby="dashboard-journey-title">
+          <div class="journey-title-row"><div><p class="small-label">THE CAREERFLOW PATH</p><h3 id="dashboard-journey-title">A practical system for steady progress</h3></div><p>Every step connects to a useful action below.</p></div>
+          <ol class="dashboard-journey-list">
+            <li><span>01</span><div><strong>TRACK</strong><p>Capture every opportunity.</p></div></li>
+            <li><span>02</span><div><strong>UNDERSTAND</strong><p>Read the role with clarity.</p></div></li>
+            <li><span>03</span><div><strong>DISCOVER</strong><p>Verify your evidence.</p></div></li>
+            <li><span>04</span><div><strong>PREPARE</strong><p>Build a useful plan.</p></div></li>
+            <li><span>05</span><div><strong>FOLLOW UP</strong><p>Stay thoughtful and timely.</p></div></li>
+          </ol>
+        </article>
+
+        <div class="dashboard-workspace-grid">
+          <article class="panel followup-panel">
+            <div class="panel-header"><div><p class="small-label">TIME-SENSITIVE</p><h3>Follow-ups due</h3></div><span id="followup-count-badge" class="count-badge">0</span></div>
+            <p class="workspace-intro">A thoughtful check-in can keep an application moving.</p>
+            <div id="dashboard-followups" class="followup-list"></div>
+          </article>
+          <article class="panel recent-panel">
+            <div class="panel-header"><div><p class="small-label">LIVE TRACKER</p><h3>Recent applications</h3></div><a class="panel-link" href="#applications">View all <span aria-hidden="true">→</span></a></div>
+            <p class="workspace-intro">A focused view of the opportunities you are actively managing.</p>
+            <div id="recent-applications" class="compact-list"></div>
+          </article>
+        </div>
+
+        <div class="dashboard-support-grid">
+          <aside class="quick-panel" aria-labelledby="quick-actions-title">
+            <div><p class="small-label">KEEP MOVING</p><h3 id="quick-actions-title">Choose your route forward</h3></div>
+            <div class="quick-actions">
+              <button class="quick-action" type="button" data-action="open-add"><span>01</span><strong>Add an application</strong><i aria-hidden="true">→</i></button>
+              <a class="quick-action" href="#ai"><span>02</span><strong>Understand a job</strong><i aria-hidden="true">→</i></a>
+              <a class="quick-action" href="#career-map"><span>03</span><strong>Explore Career Map</strong><i aria-hidden="true">→</i></a>
+            </div>
+          </aside>
+          <article class="journey-explainer">
+            <p class="small-label">WHY THIS WORKS</p>
+            <div><h3>Track the facts. Prepare with intent.</h3><p>CareerFlow turns your current opportunity into a simple path: record it, understand what it asks for, review the evidence you already have, and prepare the next honest step.</p></div>
+          </article>
+        </div>
+
+        <article class="roadmap-card" aria-labelledby="roadmap-title">
+          <div><p class="small-label">LOOKING AHEAD</p><h3 id="roadmap-title">Future Roadmap</h3><p>Ideas for later versions — not active features in this MVP.</p></div>
+          <ul>
+            <li>Skill-gap-based courses</li><li>Free and paid learning resources</li><li>Professional mentors</li><li>Company learning programs</li><li>Lawyer-assisted contract review</li><li>Interview scheduling</li><li>Video interviews</li><li>Company networking</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="applications" class="section applications-section" aria-labelledby="applications-title">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="eyebrow">Your tracker</p><h2 id="applications-title">My Applications</h2></div>
+          <button class="button button-primary" type="button" data-action="open-add">Add application</button>
+        </div>
+        <p class="section-intro">Capture the essentials first. CareerFlow updates your dashboard and follow-up reminders as your application status changes.</p>
+        <div class="applications-toolbar">
+          <div class="filter-group" role="group" aria-label="Filter applications by status">
+            <label for="status-filter">Show</label>
+            <select id="status-filter"><option value="All">All statuses</option><option value="Applied">Applied</option><option value="Screening">Screening</option><option value="Interview">Interview</option><option value="Offer">Offer</option><option value="Rejected">Rejected</option></select>
+          </div>
+          <p id="application-count" class="count-copy" aria-live="polite"></p>
+        </div>
+        <div id="applications-list" class="application-grid"></div>
+      </div>
+    </section>
+
+    <section id="ai" class="section ai-section" aria-labelledby="ai-title">
+      <div class="shell">
+        <div class="ai-banner">
+          <div><p class="eyebrow">Local analysis</p><h2 id="ai-title">CareerFlow AI — From Gap to Goal</h2><p class="ai-subtitle">From Job Requirements to a Personal Readiness Plan</p></div>
+          <div class="local-label"><span aria-hidden="true">✓</span><div><strong>Private &amp; local</strong><small>Rule-based analysis. No API or data upload.</small></div></div>
+        </div>
+        <p class="section-intro">CareerFlow reads only the text you enter in this browser. It is a local rule-based text helper, not a hiring prediction or external AI service; no entered text is uploaded.</p>
+        <p class="small-label">FROM GAP TO GOAL</p>
+        <ol class="ai-flow" aria-label="CareerFlow AI preparation workflow">
+          <li><span>01</span><div><strong>Understand the Job</strong><p>Bring together the job description and your CV in one private workspace.</p></div></li>
+          <li><span>02</span><div><strong>Discover Your Gaps</strong><p>Review explicit text matches, missing terms, and evidence to verify.</p></div></li>
+          <li><span>03</span><div><strong>Build Your Readiness Plan</strong><p>Turn the useful findings into small, checkable preparation actions.</p></div></li>
+          <li><span>04</span><div><strong>Prepare for the Interview</strong><p>Shape clear examples and questions around the role you are pursuing.</p></div></li>
+        </ol>
+        <div id="analysis-context" class="context-banner" role="status" aria-live="polite" hidden></div>
+        <div class="analysis-form-grid">
+          <div class="field-stack"><label for="job-description">Job Description <span aria-hidden="true">*</span></label><textarea id="job-description" rows="13" placeholder="Paste a job description here. CareerFlow will look for common education, skills, experience, language, certification, and other qualification terms."></textarea><p class="field-hint">Use the full job description for the most useful local suggestions.</p></div>
+          <div class="field-stack"><label for="cv-text">CV / Resume <span aria-hidden="true">*</span></label><textarea id="cv-text" rows="13" placeholder="Paste the CV or resume text you would like to compare. It stays in your browser."></textarea><p class="field-hint">Matching is limited to terms explicitly present in this text.</p></div>
+        </div>
+        <div id="analysis-errors" class="error-summary" role="alert" tabindex="-1" hidden></div>
+        <div class="analysis-actions"><button id="analyze-button" class="button button-primary button-large" type="button">Analyze job and CV <span aria-hidden="true">→</span></button><p>Suggestions are based on entered text and do not guarantee employment.</p></div>
+
+        <div id="analysis-results" class="analysis-results" hidden>
+          <div class="analysis-notice"><strong>How this works:</strong> Requirement categories are locally extracted from the job-description text. CV matching looks only for explicit wording in the CV text you provided.</div>
+          <div class="result-overview-grid">
+            <article class="panel source-panel"><p class="small-label">SOURCE 01</p><h3>Job-description information</h3><p id="job-info-summary" class="panel-copy"></p></article>
+            <article class="panel source-panel"><p class="small-label">SOURCE 02</p><h3>User-provided CV information</h3><p id="cv-info-summary" class="panel-copy"></p></article>
+            <article class="panel source-panel recommendation-panel"><p class="small-label">SOURCE 03</p><h3>AI-generated recommendations</h3><p id="recommendation-summary" class="panel-copy"></p></article>
+          </div>
+
+          <div class="results-block">
+            <div class="results-block-heading"><p class="eyebrow">AI Extracted</p><h3>Requirement categories</h3><p>Each item below is a local text-extraction suggestion, not a verified job requirement.</p></div>
+            <div id="requirements-categories" class="categories-grid"></div>
+          </div>
+
+          <div class="matching-block" aria-labelledby="matching-title">
+            <div class="results-block-heading"><p class="eyebrow">TRANSPARENT TEXT MATCHING</p><h3 id="matching-title">CV to job matching</h3><p>CareerFlow only marks a requirement as found when it is explicitly identified in the CV text. It never concludes that you do not possess a skill.</p><p class="matching-reassurance">Not found in your CV does not mean you do not have this skill. Consider verifying your experience.</p></div>
+            <div class="match-grid">
+              <article class="match-card found"><div class="match-card-head"><span aria-hidden="true">✓</span><h4>Found in CV</h4></div><ul id="matches-found"></ul></article>
+              <article class="match-card not-found"><div class="match-card-head"><span aria-hidden="true">+</span><h4>Not Found in Your CV</h4></div><ul id="matches-not-found"></ul></article>
+              <article class="match-card verify"><div class="match-card-head"><span aria-hidden="true">?</span><h4>Needs Verification</h4></div><ul id="matches-verify"></ul></article>
+            </div>
+            <p class="matching-limit"><strong>Limits of local matching:</strong> CareerFlow checks for simple, explicit text matches. It cannot reliably assess experience quality, years of experience, degree equivalency, or unclear qualifications.</p>
+          </div>
+
+          <div class="plan-block" aria-labelledby="plan-title">
+            <div class="plan-header"><div><p class="eyebrow">PRACTICAL NEXT STEPS</p><h3 id="plan-title">My Readiness Plan</h3><p>Turn important missing or unverified requirements into manageable evidence-building actions.</p></div><div class="plan-progress"><strong id="plan-percent">0%</strong><span id="plan-count">0 of 0 complete</span></div></div>
+            <div class="progress-track progress-wide" role="progressbar" aria-label="Readiness plan completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="plan-progress"></span></div>
+            <p id="plan-remaining" class="plan-remaining">No readiness actions yet.</p>
+            <div id="readiness-actions" class="readiness-actions"></div>
+            <p class="plan-disclaimer">This readiness plan is a learning guide based on the text provided. It does not guarantee employment.</p>
+          </div>
+
+          <div class="interview-block" aria-labelledby="interview-title">
+            <div class="results-block-heading"><p class="eyebrow">PREPARE WITH PURPOSE</p><h3 id="interview-title">Interview preparation</h3><p>AI-generated preparation suggestions, not interview predictions.</p></div>
+            <ol id="interview-questions" class="question-list"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="career-map" class="section map-section" aria-labelledby="career-map-title">
+      <div class="shell">
+        <div class="section-heading"><div><p class="eyebrow">Explore possibilities</p><h2 id="career-map-title">Career Map</h2><p class="ai-subtitle">Explore careers. Understand requirements. Prepare with purpose.</p></div><span class="demo-chip">Demo Data</span></div>
+        <ol class="map-flow" aria-label="Career Map workflow"><li><span>01</span><strong>Explore</strong></li><li><span>02</span><strong>Understand Requirements</strong></li><li><span>03</span><strong>Compare with My CV</strong></li><li><span>04</span><strong>Prepare</strong></li></ol>
+        <p class="section-intro">These generic examples are made-up Demo Data for exploration only. Compare sends the selected role to your local analysis; they are not requirements from real companies.</p>
+        <div id="career-map-list" class="career-map-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell"><span class="brand footer-brand">Career<span>Flow</span></span><p>Private browser workspace · Local rule-based suggestions · Built for deliberate progress</p></div></footer>
+
+  <dialog id="application-dialog" class="application-dialog" aria-labelledby="application-dialog-title">
+    <form id="application-form" novalidate>
+      <div class="dialog-head"><div><p class="small-label">APPLICATION TRACKER</p><h2 id="application-dialog-title">Add an application</h2></div><button class="icon-button" type="button" data-action="close-dialog" aria-label="Close application form">×</button></div>
+      <div id="application-form-errors" class="error-summary" role="alert" tabindex="-1" hidden></div>
+      <input id="application-id" type="hidden">
+      <div class="dialog-fields">
+        <div class="field-stack"><label for="application-company">Company <span aria-hidden="true">*</span></label><input id="application-company" type="text" autocomplete="organization" placeholder="e.g. Bright Horizon Studio"><p id="company-error" class="inline-error" hidden></p></div>
+        <div class="field-stack"><label for="application-title">Job Title <span aria-hidden="true">*</span></label><input id="application-title" type="text" autocomplete="organization-title" placeholder="e.g. Junior Product Designer"><p id="title-error" class="inline-error" hidden></p></div>
+        <div class="field-stack"><label for="application-status">Application Status <span aria-hidden="true">*</span></label><select id="application-status"><option value="Applied">Applied</option><option value="Screening">Screening</option><option value="Interview">Interview</option><option value="Offer">Offer</option><option value="Rejected">Rejected</option></select></div>
+        <div class="field-stack"><label for="application-date">Application Date <span aria-hidden="true">*</span></label><input id="application-date" type="date"><p id="date-error" class="inline-error" hidden></p></div>
+      </div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-action="close-dialog">Cancel</button><button id="application-save" class="button button-primary" type="submit">Save application</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+  <script src="sample-data/data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
